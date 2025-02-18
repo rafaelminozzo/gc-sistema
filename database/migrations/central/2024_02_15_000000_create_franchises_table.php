@@ -8,25 +8,37 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('franchises', function (Blueprint $table) {
-            $table->string('id')->primary(); // Será usado como identificador do tenant
-            $table->string('name');
-            $table->string('company_name');
-            $table->string('cnpj', 14)->unique();
-            $table->string('address');
-            $table->string('city');
-            $table->string('state', 2);
-            $table->string('zip_code', 8);
-            $table->string('phone');
-            $table->string('email');
-            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
-            $table->json('data')->nullable();
-            $table->timestamps();
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->string('name')->nullable()->after('id');
+            $table->string('company_name')->nullable()->after('name');
+            $table->string('cnpj', 14)->nullable()->unique()->after('company_name');
+            $table->string('address')->nullable()->after('cnpj');
+            $table->string('city')->nullable()->after('address');
+            $table->string('state', 2)->nullable()->after('city');
+            $table->string('zip_code', 8)->nullable()->after('state');
+            $table->string('phone')->nullable()->after('zip_code');
+            $table->string('email')->nullable()->after('phone');
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active')->after('email');
+            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('franchises');
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->dropColumn([
+                'name',
+                'company_name',
+                'cnpj',
+                'address',
+                'city',
+                'state',
+                'zip_code',
+                'phone',
+                'email',
+                'status',
+                'deleted_at'
+            ]);
+        });
     }
 };
