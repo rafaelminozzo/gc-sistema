@@ -12,30 +12,34 @@ class CreateFranchise
 {
     public function execute(array $data): Franchise
     {
+        // Limpa os dados antes da validação
+        $data['cnpj'] = preg_replace('/[^0-9]/', '', $data['cnpj']);
+        $data['zip_code'] = preg_replace('/[^0-9]/', '', $data['zip_code']);
+        $data['phone'] = preg_replace('/[^0-9]/', '', $data['phone']);
+
         $this->validate($data);
 
         try {
             return DB::transaction(function () use ($data) {
-                // Limpa os dados antes de salvar
-                $data['cnpj'] = preg_replace('/[^0-9]/', '', $data['cnpj']);
-                $data['zip_code'] = preg_replace('/[^0-9]/', '', $data['zip_code']);
-                $data['phone'] = preg_replace('/[^0-9]/', '', $data['phone']);
-
                 // Gera o ID baseado no nome
                 $tenantId = Franchise::createTenantId($data['name']);
 
-                // Cria a franquia com o ID gerado
+                // Cria a franquia
                 $franchise = Franchise::create([
                     'id' => $tenantId,
                     'name' => $data['name'],
                     'company_name' => $data['company_name'],
                     'cnpj' => $data['cnpj'],
+                    'zip_code' => $data['zip_code'],
                     'address' => $data['address'],
+                    'number' => $data['number'],
+                    'complement' => $data['complement'],
+                    'neighborhood' => $data['neighborhood'],
                     'city' => $data['city'],
                     'state' => $data['state'],
-                    'zip_code' => $data['zip_code'],
                     'phone' => $data['phone'],
                     'email' => $data['email'],
+                    'status' => 'active'
                 ]);
 
                 // Cria o domínio para a franquia
@@ -56,11 +60,14 @@ class CreateFranchise
         $validator = Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'company_name' => ['required', 'string', 'max:255'],
-            'cnpj' => ['required', 'string', 'min:14', 'max:14'],
+            'cnpj' => ['required', 'string', 'size:14', 'unique:tenants,cnpj'],
+            'zip_code' => ['required', 'string', 'size:8'],
             'address' => ['required', 'string', 'max:255'],
+            'number' => ['required', 'string', 'max:20'],
+            'complement' => ['nullable', 'string', 'max:255'],
+            'neighborhood' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
             'state' => ['required', 'string', 'size:2'],
-            'zip_code' => ['required', 'string', 'min:8', 'max:8'],
             'phone' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:255'],
         ]);

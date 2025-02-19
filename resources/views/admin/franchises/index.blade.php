@@ -1,56 +1,84 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Franquias - Ginástica do Cérebro</title>
-</head>
+@section('title', 'Franquias')
 
-<body>
-    <h1>Franquias</h1>
+@section('header', 'Gestão de Franquias')
 
-    @if (session('success'))
-        <div style="color: green;">
-            {{ session('success') }}
-        </div>
-    @endif
+@section('content')
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-medium text-gray-900">
+            Lista de Franquias
+        </h2>
+        <a href="{{ route('admin.franchises.create') }}" 
+           class="bg-gc-blue hover:bg-gc-blue-dark text-white font-bold py-2 px-4 rounded">
+            Nova Franquia
+        </a>
+    </div>
 
-    <a href="{{ route('admin.franchises.create') }}">Nova Franquia</a>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Razão Social</th>
-                <th>CNPJ</th>
-                <th>Cidade/UF</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($franchises as $franchise)
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
                 <tr>
-                    <td>{{ $franchise->name }}</td>
-                    <td>{{ $franchise->company_name }}</td>
-                    <td>{{ $franchise->cnpj }}</td>
-                    <td>{{ $franchise->city }}/{{ $franchise->state }}</td>
-                    <td>{{ $franchise->status }}</td>
-                    <td>
-                        <a href="#">Editar</a>
-                        <a href="#">Visualizar</a>
-                    </td>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nome
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Razão Social
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        CNPJ
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Cidade/UF
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Ações
+                    </th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6">Nenhuma franquia encontrada</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @forelse($franchises as $franchise)
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ $franchise->name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ $franchise->company_name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ $franchise->cnpj }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ $franchise->city }}/{{ $franchise->state }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {{ $franchise->status === 'active' ? 'bg-green-100 text-green-800' : 
+                                   ($franchise->status === 'inactive' ? 'bg-yellow-100 text-yellow-800' : 
+                                    'bg-red-100 text-red-800') }}">
+                                {{ $franchise->status }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="#" class="text-gc-blue hover:text-gc-blue-dark mr-3">Editar</a>
+                            <a href="#" class="text-gc-blue hover:text-gc-blue-dark">Visualizar</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            Nenhuma franquia encontrada
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-    {{ $franchises->links() }}
-</body>
-
-</html>
+    <div class="mt-4">
+        {{ $franchises->links() }}
+    </div>
+@endsection
