@@ -144,7 +144,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="#" class="text-gc-blue hover:text-gc-blue-dark">Editar</a>
+                                <a href="{{ route('admin.franchises.edit', $franchise) }}" class="text-gc-blue hover:text-gc-blue-dark">Editar</a>
                             </td>
                         </tr>
                     @endforeach
